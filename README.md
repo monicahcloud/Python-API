@@ -1,4 +1,4 @@
-# Python-API
+# Weather_Trend_Analysis
 
 
 Climate analysis using SQLAlchemy (sqlite) & Flask data endpoints
@@ -7,7 +7,7 @@ Technology stack: Python, SQLAlchemy ORM, SQLite, Pandas, Matplotlib, Flask (JSO
 Data Preparation
 Climate data for Hawaii was provided in two CSV files. The content of these files was scrubbed.
 
-Jupyter Notebook .ipynb takes care of data preparation / cleanup tasks.
+Jupyter Notebook weather.ipynb takes care of data preparation / cleanup tasks.
 Pandas dataframes are created from the measurement and station CSV files.
 NaNs / missing values are cleaned from the data, and cleaned CSV files are saved.
 Database Engineering
