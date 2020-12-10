@@ -1,65 +1,57 @@
 # Python-API
 
 
-Whether financial, political, or social -- data's true power lies in its ability to answer questions definitively. So let's take what you've learned about Python requests, APIs, and JSON traversals to answer a fundamental question: "What's the weather like as we approach the equator?"
+Climate analysis using SQLAlchemy (sqlite) & Flask data endpoints
+Technology stack: Python, SQLAlchemy ORM, SQLite, Pandas, Matplotlib, Flask (JSON API endpoints)
 
-Now, we know what you may be thinking: "Duh. It gets hotter..."
+Data Preparation
+Climate data for Hawaii was provided in two CSV files. The content of these files was scrubbed.
 
-But, if pressed, how would you prove it?
+Jupyter Notebook .ipynb takes care of data preparation / cleanup tasks.
+Pandas dataframes are created from the measurement and station CSV files.
+NaNs / missing values are cleaned from the data, and cleaned CSV files are saved.
+Database Engineering
+Using SQLAlchemy to model database schema, sqlite tables for "measurements" and "stations" are created.
 
-Part I - WeatherPy
-In this example, you'll be creating a Python script to visualize the weather of 500+ cities across the world of varying distance from the equator. To accomplish this, you'll be utilizing a simple Python library, the OpenWeatherMap API, and a little common sense to create a representative model of weather across world cities.
+Jupyter Notebook database_engineering.ipynb used for database engineering work.
+Pandas used to read cleaned measurements and stations CSV data.
+Database called hawaii.sqlite created, using declarative_base to create ORM classes for each table, and used create_all to populate database.
+Climate Analysis
+Climate analysis and data exploration on new weather tables.
 
-Your first objective is to build a series of scatter plots to showcase the following relationships:
+Jupyter Notebook file called climate_analysis.ipynb used to complete climate analysis and data exporation.
+Start date and end date determine "vacation" range.
+Used SQLAlchemy create_engine to connect to sqlite database, and automap_base() to reflect tables into classes. Referenced those classes as Station and Measurement.
+Precipitation analysis
+Queries retrieve the last 12 months of precipitation data, and results are plotted using matplotlib
+Pandas dataframes house the summary statistics for the precipitation data.
+Station analysis
+Calculations of the total number of stations, and most active stations.
+Retrieval of the last 12 months of temperature observation data (tobs), filtered by the station with the highest number of observations.
+Plotted results as a histogram with bins=12.
+Temperature analysis
+Function calc_temps accepts a start date and end date in the format %Y-%m-%d, returns the minimum, average, and maximum temperatures for that range of dates.
+Function calculates min, avg, and max temperatures for trip using the matching dates from the previous year (i.e. use "2017-01-01" if trip start date was "2018-01-01")
+Plotted the min, avg, and max temperature from previous query as a bar chart.
+Used the average temperature as the bar height.
+Used the peak-to-peak (tmax-tmin) value as the y error bar (yerr).
+Flask Web Application
+Flask web app with routes (endpoints) displaying JSON data results from each of the above queries.
 
-Temperature (F) vs. Latitude
-Humidity (%) vs. Latitude
-Cloudiness (%) vs. Latitude
-Wind Speed (mph) vs. Latitude
-After each plot add a sentence or too explaining what the code is and analyzing.
+Routes (API endpoints)
+/api/v1.0/precipitation
 
-Your next objective is to run linear regression on each relationship, only this time separating them into Northern Hemisphere (greater than or equal to 0 degrees latitude) and Southern Hemisphere (less than 0 degrees latitude):
+Queries dates and temperature observations from the last year.
+Converts query results to a dictionary using date as the key and tobs as the value.
+Returns the json representation of dictionary.
+/api/v1.0/stations
 
-Northern Hemisphere - Temperature (F) vs. Latitude
-Southern Hemisphere - Temperature (F) vs. Latitude
-Northern Hemisphere - Humidity (%) vs. Latitude
-Southern Hemisphere - Humidity (%) vs. Latitude
-Northern Hemisphere - Cloudiness (%) vs. Latitude
-Southern Hemisphere - Cloudiness (%) vs. Latitude
-Northern Hemisphere - Wind Speed (mph) vs. Latitude
-Southern Hemisphere - Wind Speed (mph) vs. Latitude
-After each pair of plots explain what the linear regression is analyzing, any relationships you notice and any other analysis you may have.
+Returns a json list of stations from the dataset.
+/api/v1.0/tobs
 
-Your final notebook must:
+Returns a json list of temperature observations (tobs) for the previous year
+/api/v1.0/<start> and /api/v1.0/<start>/<end>
 
-Randomly select at least 500 unique (non-repeat) cities based on latitude and longitude.
-Perform a weather check on each of the cities using a series of successive API calls.
-Include a print log of each city as it's being processed with the city number and city name.
-Save a CSV of all retrieved data and a PNG image for each scatter plot.
-Part II - VacationPy
-Now let's use your skills in working with weather data to plan future vacations. Use Jupyter gmaps and the Google Places API for this part of the assignment.
-
-Note: if you having trouble displaying the maps try running jupyter nbextension enable --py gmaps in your environment and retry.
-
-Create a heat map that displays the humidity for every city from the part I of the homework.
-
-
-Narrow down the DataFrame to find your ideal weather condition. For example:
-
-A max temperature lower than 80 degrees but higher than 70.
-
-Wind speed less than 10 mph.
-
-Zero cloudiness.
-
-Drop any rows that don't contain all three conditions. You want to be sure the weather is ideal.
-
-Note: Feel free to adjust to your specifications but be sure to limit the number of rows returned by your API requests to a reasonable number.
-
-Using Google Places API to find the first hotel for each city located within 5000 meters of your coordinates.
-
-Plot the hotels on top of the humidity heatmap with each pin containing the Hotel Name, City, and Country.
-
-
-Copyright
-Trilogy Education Services © 2019. All Rights Reserved.
+Returns a json list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
+Given the start only, calculates TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
+Given the start and the end date, calculates the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
